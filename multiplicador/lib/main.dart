@@ -9,57 +9,46 @@ class MeuApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Row(
+            children: [
+              Text('Multiplicador de Números'),
+              SizedBox(width: 10),
+              Image.network(
+                'https://www.freeiconspng.com/uploads/calculator-icon-2.png',
+                width: 30,
+                height: 30,
+              ),
+            ],
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.blue, // cor azul do AppBar
+        ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Calculadora(),
+          child: Multiplicador(),
         ),
       ),
     );
   }
 }
 
-class Calculadora extends StatefulWidget {
+class Multiplicador extends StatefulWidget {
   @override
-  _EstadoCalculadora createState() => _EstadoCalculadora();
+  _MultiplicadorState createState() => _MultiplicadorState();
 }
 
-class _EstadoCalculadora extends State<Calculadora> {
+class _MultiplicadorState extends State<Multiplicador> {
   TextEditingController controlador1 = TextEditingController();
   TextEditingController controlador2 = TextEditingController();
-  String resultado = "";
+  String resultado = '';
 
   void calcular() {
     setState(() {
-      try {
-        double num2 = double.parse(controlador2.text);
-        String operacao = controlador1.text.trim();
-        double num1 = double.parse(operacao.substring(0, operacao.length - 1));
-        String operador = operacao.substring(operacao.length - 1);
-
-        switch (operador) {
-          case '+':
-            resultado = (num1 + num2).toString();
-            break;
-          case '-':
-            resultado = (num1 - num2).toString();
-            break;
-          case '*':
-            resultado = (num1 * num2).toString();
-            break;
-          case '/':
-            if (num2 != 0) {
-              resultado = (num1 / num2).toString();
-            } else {
-              resultado = "Divisão por zero";
-            }
-            break;
-          default:
-            resultado = "Operador inválido";
-        }
-      } catch (e) {
-        resultado = "Expressão inválida";
-      }
+      double num1 = double.tryParse(controlador1.text) ?? 0;
+      double num2 = double.tryParse(controlador2.text) ?? 0;
+      var res = num1 * num2;
+      resultado = 'Resultado: $res';
     });
   }
 
@@ -74,27 +63,35 @@ class _EstadoCalculadora extends State<Calculadora> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.network(
+              'https://www.freeiconspng.com/uploads/calculator-icon-2.png',
+              width: 200,
+              height: 200,
+            ),
+            SizedBox(height: 20), // Espaço de 20 após a imagem
             Container(
               width: 300,
               child: TextField(
                 controller: controlador1,
+                keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
-                  hintText: 'Insira o valor e operador +,-,*,/',
+                  hintText: 'Digite o primeiro número...',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             Container(
               width: 300,
               child: TextField(
                 controller: controlador2,
+                keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
-                  hintText: 'Insira o segundo valor',
+                  hintText: 'Digite o segundo número...',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(50),
                   ),
@@ -104,18 +101,14 @@ class _EstadoCalculadora extends State<Calculadora> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: calcular,
-              style: ElevatedButton.styleFrom(
-                primary: Colors.blue,
-                onPrimary: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+              child: Text(
+                'Calcular',
+                style: TextStyle(fontSize: 18), // 30% maior
               ),
-              child: Text('Calcular'),
             ),
             SizedBox(height: 20),
             Text(
-              'Resultado: $resultado',
+              resultado,
               style: TextStyle(fontSize: 24),
             ),
           ],
